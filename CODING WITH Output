@@ -92,3 +92,12 @@ public class WeatherAPI {
     }
 
 }
+output
+. Get Temperature
+2. Get Wind Speed
+3. Get Pressure
+0. Exit
+Enter your choice: 1
+Enter the city name: London
+Enter the date and time (YYYY-MM-DD HH:mm): 2023-08-21 12:00
+Temperature: 22.6
