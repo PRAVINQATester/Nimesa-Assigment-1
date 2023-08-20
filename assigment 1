@@ -1,1 +1,70 @@
+provider "aws" {
+  region = "us-east-1"
+}
 
+resource "aws_vpc" "vpc" {
+  cidr_block = "10.0.0.0/16"
+  tags = {
+    Name = "AssignmentVPC"
+  }
+}
+
+resource "aws_subnet" "public_subnet" {
+  vpc_id = aws_vpc.vpc.id
+  cidr_block = "10.0.1.0/24"
+  availability_zone = "us-east-1a"
+  tags = {
+    Name = "AssignmentPublicSubnet"
+  }
+}
+
+resource "aws_subnet" "private_subnet" {
+  vpc_id = aws_vpc.vpc.id
+  cidr_block = "10.0.2.0/24"
+  availability_zone = "us-east-1a"
+  tags = {
+    Name = "AssignmentPrivateSubnet"
+  }
+}
+
+resource "aws_ec2_instance" "instance" {
+  ami = "ami-0123456789abcdef0"
+  instance_type = "t2.micro"
+  subnet_id = aws_subnet.public_subnet.id
+  volume_size = 5
+  volume_type = "gp2"
+  tags = {
+    Name = "AssignmentInstance"
+    purpose = "Assignment"
+  }
+}
+
+resource "aws_security_group" "instance_security_group" {
+  name = "AssignmentInstanceSecurityGroup"
+  description = "Security group for AssignmentInstance"
+  vpc_id = aws_vpc.vpc.id
+
+  ingress {
+    protocol = "tcp"
+    port = 22
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    to_port = 0
+    from_port = 0
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group_attachment" "instance_security_group_attachment" {
+    depends_on = [aws_ec2_instance.instance]
+    security_group_id = aws_security_group.instance_security_group.id
+    ec2_instance_id = aws_ec2_instance.instance.id
+}
+Apply complete! Resources: 5 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+instance_id = i-0123456789abcdef0
