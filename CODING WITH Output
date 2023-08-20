@@ -1,99 +1,99 @@
-package testinng;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
 
 public class WeatherAPI {
+    private static final String BASE_URL = "https://samples.openweathermap.org/data/2.5/forecast/hourly?q=London,us&appid=b6907d289e10d714a6e88b30761fae22";
 
-    private static final String API_KEY = "b6907d289e10d714a6e88b30761fae22";
-
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("1. Get Temperature");
-        System.out.println("2. Get Wind Speed");
-        System.out.println("3. Get Pressure");
-        System.out.println("0. Exit");
-
-        int option = scanner.nextInt();
-
-        while (option != 0) {
-            switch (option) {
-                case 1:
-                    System.out.print("Enter date and time (YYYY-MM-DD HH:mm): ");
-                    String dateAndTime = scanner.next();
-                    double temperature = getTemperature(dateAndTime);
-                    System.out.println("Temperature: " + temperature);
-                    break;
-                case 2:
-                    System.out.print("Enter date and time (YYYY-MM-DD HH:mm): ");
-                    dateAndTime = scanner.next();
-                    double windSpeed = getWindSpeed(dateAndTime);
-                    System.out.println("Wind speed: " + windSpeed);
-                    break;
-                case 3:
-                    System.out.print("Enter date and time (YYYY-MM-DD HH:mm): ");
-                    dateAndTime = scanner.next();
-                    double pressure = getPressure(dateAndTime);
-                    System.out.println("Pressure: " + pressure);
-                    break;
-                default:
-                    System.out.println("Invalid option");
-            }
-
-            System.out.println("1. Get Temperature");
-            System.out.println("2. Get Wind Speed");
+        while (true) {
+            System.out.println("1. Get weather");
+            System.out.println("2. Get Wind Speed ");
             System.out.println("3. Get Pressure");
             System.out.println("0. Exit");
-            option = scanner.nextInt();
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter the date and time (YYYY-MM-DD HH:mm:ss): ");
+                    scanner.nextLine();
+
+                    String date1 = scanner.nextLine();
+                    double temperature = getTemperature(date1);
+                    if (temperature != Double.MIN_VALUE) {
+                        System.out.printf("Temperature at %s: %.2f \u00B0C%n", date1, temperature);
+                    } else {
+                        System.out.println("Data not found for the given date and time.");
+                    }
+                    break;
+
+                case 2:
+                    System.out.print("Enter the date and time (YYYY-MM-DD HH:mm:ss): ");
+                    scanner.nextLine();
+                    String date2 = scanner.nextLine();
+                    double windSpeed = getWindSpeed(date2);
+                    if (windSpeed != Double.MIN_VALUE) {
+                        System.out.printf("Wind Speed at %s: %.2f m/s%n", date2, windSpeed);
+                    } else {
+                        System.out.println("Data not found for the given date and time.");
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Enter the date and time (YYYY-MM-DD HH:mm:ss): ");
+                    scanner.nextLine();
+                    String date3 = scanner.nextLine();
+                    double pressure = getPressure(date3);
+                    if (pressure != Double.MIN_VALUE) {
+                        System.out.printf("Pressure at %s: %.2f hPa%n", date3, pressure);
+                    } else {
+                        System.out.println("Data not found for the given date and time.");
+                    }
+                    break;
+
+                case 0:
+                    System.out.println("Exiting the program.");
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
         }
     }
 
-    private static double getPressure(String dateAndTime) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    private static double getTemperature(String date) {
+        try {
+            String apiUrl = BASE_URL;
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
 
-	private static double getTemperature(String dateAndTime) throws IOException {
-        URL url = new URL("https://samples.openweathermap.org/data/2.5/forecast/hourly?q=London,us&appid=" + API_KEY + "&dt=" + dateAndTime);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
 
-        int responseCode = connection.getResponseCode();
-        if (responseCode != 200) {
-            throw new IOException("HTTP error code: " + responseCode);
+            conn.disconnect();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        InputStreamReader reader = new InputStreamReader(connection.getInputStream());
-        Scanner scanner = new Scanner(reader);
-        String response = scanner.nextLine();
-
-        return Double.parseDouble(response.split(",")[2]);
+        return Double.MIN_VALUE;
     }
 
-    private static double getWindSpeed(String dateAndTime) throws IOException {
-        URL url = new URL("https://samples.openweathermap.org/data/2.5/forecast/hourly?q=London,us&appid=" + API_KEY + "&dt=" + dateAndTime);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
+    private static double getWindSpeed(String date) {
 
-        int responseCode = connection.getResponseCode();
-        if (responseCode != 200) {
-            throw new IOException("HTTP error code: " + responseCode);
-        }
-
-        InputStreamReader reader = new InputStreamReader(connection.getInputStream());
-        Scanner scanner = new Scanner(reader);
-        String response = scanner.nextLine();
-
-        return Double.parseDouble(response.split(",")[3]);
+        return Double.MIN_VALUE;
     }
 
+    private static double getPressure(String date) {
+
+        return Double.MIN_VALUE;
+    }
 }
+
 output
-. Get Temperature
+1. Get Temperature
 2. Get Wind Speed
 3. Get Pressure
 0. Exit
